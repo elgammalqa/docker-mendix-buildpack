@@ -13,6 +13,7 @@ ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
 ARG CF_BUILDPACK=v4.12.0
+ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -20,10 +21,12 @@ ARG CF_BUILDPACK=v4.12.0
 # 4. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 5. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
-    echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xz -C /opt/mendix/buildpack --strip-components 1 &&\
+    echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
+    curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
+    python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
+    rm /tmp/cf-mendix-buildpack.zip &&\
     chgrp -R 0 /opt/mendix &&\
-    chmod -R g=u  /opt/mendix
+    chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation scripts/git /opt/mendix/buildpack/
