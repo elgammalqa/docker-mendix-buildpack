@@ -1,4 +1,4 @@
-VERSION=$(shell cat docker-buildpack.version)
+VERSION=v841
 CF_BUILDPACK_VERSION=$(shell cat cf-buildpack.version)
 
 get-sample:
@@ -12,7 +12,7 @@ build-image:
 	docker build \
 	--build-arg BUILD_PATH=build \
 	--build-arg CF_BUILDPACK=$(CF_BUILDPACK_VERSION) \
-	-t mendix/mendix-buildpack:$(VERSION) .
+	-t amirelgammal/cws:$(VERSION) .
 
 test-container:
 	tests/test-generic.sh tests/docker-compose-postgres.yml
